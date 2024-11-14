@@ -12,10 +12,14 @@ import CoreLocation
 
 struct ContentView: View{
     @State private var selectedItemProvider: NSItemProvider?
+    @State private var originalAsset : PHAsset?
+    
     @State private var showPicker = false
     @State private var image: UIImage?
     
     @State private var photoSelected = false
+    
+    @State private var deleteOriginal = false
     
     @State private var isDatePickerSheetPresented = false
     @State private var selectedTimestamp = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
@@ -105,7 +109,11 @@ struct ContentView: View{
             request.addResource(with: .photo, data: imageData, options: options)
         }) { success, error in
             if success {
-                //deleteOriginalPhoto(asset: originalAsset)
+                if(deleteOriginal){
+                    if let asset = originalAsset {
+                        deleteOriginalPhoto(asset: asset)
+                    }
+                }
                 print("Modified image saved successfully.")
             } else if let error = error {
                 print("Error saving modified image: \(error)")
@@ -127,14 +135,6 @@ struct ContentView: View{
     }
 
     var body: some View {
-        if(!photoSelected){
-            VStack{
-                Text("Pyongyang Tomorrow")
-                Text("내일 평양")
-                Spacer()
-            }
-        }
-
         VStack {
             if let image = image {
                 Image(uiImage: image)
@@ -142,17 +142,31 @@ struct ContentView: View{
                     .scaledToFit()
                     .frame(height: 300)
             }
-            Spacer()
             if(!photoSelected){
                 Button(action: {
                     showPicker = true
                 }){
-                    Text("🇰🇵 Select Photo  🇰🇵")
+                    VStack{
+                        Text("Pyongyang Tomorrow")
+                        Text("내일 평양")
+                        Text("🇰🇵 Select Photo  🇰🇵")
+                    }
                 }
                 .padding()
             } else
             {
                 VStack{
+                    HStack{
+                        Text("Delete Original:")
+                            .font(.headline)
+                            .padding()
+                        Spacer()
+                        Toggle(isOn: $deleteOriginal){
+                            EmptyView()
+                        }
+                        .tint(.red)
+                        .padding()
+                    }
                     LocationPickerView(selectedLocation: $selectedLocation)
                     HStack{
                         Text("Date:")
@@ -168,14 +182,14 @@ struct ContentView: View{
                     }
                     .sheet(isPresented: $isDatePickerSheetPresented ) {
                         FutureDatePickerView(selectedDate: $selectedTimestamp)
-                            .presentationDetents([.fraction(0.3), .medium]) // Cover 30% of screen or use medium height
+                            .presentationDetents([.fraction(0.45), .medium]) // Cover 30% of screen or use medium height
                             .presentationDragIndicator(.visible) // Adds a drag indicator to the sheet
                     }
                     HStack{
                         Button(action: {
                             showPicker = true
                         }){
-                            Text("🖼️ Select Photo")
+                            Text("🖼️ New Photo")
                         }
                         Button("💾 Save Changes") {
                             if let image = image {
@@ -189,7 +203,7 @@ struct ContentView: View{
             }
         }
         .sheet(isPresented: $showPicker) {
-            PhotoPickerView(selectedItemProvider: $selectedItemProvider)
+            PhotoPickerView(selectedItemProvider: $selectedItemProvider, selectedAsset: $originalAsset)
         }
         .onChange(of: selectedItemProvider) {
             if let provider = $0, provider.canLoadObject(ofClass: UIImage.self) {
