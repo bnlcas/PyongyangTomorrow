@@ -21,19 +21,16 @@ struct FutureDatePickerView: View {
                  "Date",
                  selection: $selectedDate,
                  in: Date()..., // Restrict selection to dates in the future
-                 displayedComponents: [.date, .hourAndMinute] // You can specify date, time, or both
+                 displayedComponents: [.date, .hourAndMinute]
              )
              .datePickerStyle(WheelDatePickerStyle())
-             //(GraphicalDatePickerStyle()) // Graphical style for better UX
+             //(GraphicalDatePickerStyle())
              .padding()
-
-             // Display the selected date
              Text("You selected: \(formattedDate(selectedDate))")
                  .padding()
          }
      }
 
-     // Helper function to format the selected date
      private func formattedDate(_ date: Date) -> String {
          let formatter = DateFormatter()
          formatter.dateStyle = .medium

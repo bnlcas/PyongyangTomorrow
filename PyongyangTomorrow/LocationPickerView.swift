@@ -17,10 +17,6 @@ enum Location: String, CaseIterable, Identifiable {
 }
 
 struct LocationPickerView: View {
-    // Options for the picker
-    //let locations = ["🇰🇵Pyongyang", "⛄North Pole", "🏛️White House", "🐧Antarctica"]
-
-    // State variable to track the selected option
     @Binding var selectedLocation: Location
 
     var body: some View {
@@ -34,7 +30,7 @@ struct LocationPickerView: View {
                     Text(location.rawValue).tag(location)
                 }
             }
-            .pickerStyle(MenuPickerStyle()) // Dropdown style picker
+            .pickerStyle(MenuPickerStyle())
             .padding()
         }
     }

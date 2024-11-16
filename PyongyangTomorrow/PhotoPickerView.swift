@@ -103,7 +103,6 @@ struct PhotoPickerView: UIViewControllerRepresentable {
             } else {
                 print("Asset identifier is nil.")
             }
-
         }
     }
 }

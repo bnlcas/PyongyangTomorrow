@@ -149,7 +149,7 @@ struct ContentView: View{
                     VStack{
                         Text("Pyongyang Tomorrow")
                         Text("내일 평양")
-                        Text("🇰🇵 Select Photo  🇰🇵")
+                        Text("🇰🇵 Select Photo 🇰🇵")
                     }
                 }
                 .padding()
@@ -182,8 +182,8 @@ struct ContentView: View{
                     }
                     .sheet(isPresented: $isDatePickerSheetPresented ) {
                         FutureDatePickerView(selectedDate: $selectedTimestamp)
-                            .presentationDetents([.fraction(0.45), .medium]) // Cover 30% of screen or use medium height
-                            .presentationDragIndicator(.visible) // Adds a drag indicator to the sheet
+                            .presentationDetents([.fraction(0.45), .medium])
+                            .presentationDragIndicator(.visible)
                     }
                     HStack{
                         Button(action: {
@@ -232,32 +232,6 @@ struct ContentView: View{
         }
     }
 }
-    
-    /*
-            Button(action: {
-                print("future")
-                showPicker = true
-            }){
-                ZStack{
-
-                    RoundedRectangle(cornerSize: CGSize(width: 20.0, height: 20.0))
-                        .frame(width: 300, height:150)
-                        //.background(Color.red)
-                        .foregroundColor(Color.red)
-                    
-                    VStack{
-                        Text("Pyongyang Tomorrow")
-                        Text("내일 평양")
-                    }
-
-
-                }
-            }
-
-        }
-        .padding()
-    }
-}*/
 
 #Preview {
     ContentView()
