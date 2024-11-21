@@ -21,6 +21,8 @@ struct ContentView: View{
     
     @State private var deleteOriginal = false
     
+    @State private var fadeInterval = 0.0
+    
     @State private var isDatePickerSheetPresented = false
     @State private var selectedTimestamp = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
 
@@ -41,15 +43,20 @@ struct ContentView: View{
             return (latitude: 90.0, longitude: 135.0) // Approximate coordinates for the North Pole
         case .pyongyang:
             return (latitude: 39.0392, longitude: 125.7625) // Coordinates for Pyongyang, North Korea
-        case .whiteHouse:
-            return (latitude: 38.8977, longitude: -77.0365) // Coordinates for the White House, Washington, D.C.
+        case .ciaHQ:
+            return (latitude: 38.950887, longitude: -77.147589) // George Bush Center for intelligence
         case .antarctica:
             return (latitude: -77.8419, longitude: 166.6863) // Coordinates for McMurdo Station, Antarctica
+        case .area51:
+            return (latitude: 37.238629,  longitude: -115.813694)//area 51
         }
     }
     
     // Modify EXIF metadata and save the image
     func modifyAndSavePhoto(image: UIImage) {
+        withAnimation(.easeInOut(duration: 2.2)){
+            fadeInterval = 1.0
+        }
         let latLong = getLatLong(selectedLocation)
 
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
@@ -107,12 +114,16 @@ struct ContentView: View{
             let options = PHAssetResourceCreationOptions()
             let request = PHAssetCreationRequest.forAsset()
             request.addResource(with: .photo, data: imageData, options: options)
+                
         }) { success, error in
             if success {
                 if(deleteOriginal){
                     if let asset = originalAsset {
                         deleteOriginalPhoto(asset: asset)
                     }
+                }
+                withAnimation(.easeInOut(duration: 0.8)){
+                    fadeInterval = 1.0
                 }
                 print("Modified image saved successfully.")
             } else if let error = error {
@@ -136,11 +147,22 @@ struct ContentView: View{
 
     var body: some View {
         VStack {
+            /*Image(systemName: "figure.run.circle.fill")
+                .font(.system(size: 300))
+                .colorEffect(ShaderLibrary.checkerboard(.float(0.2), .color(.blue)))*/
             if let image = image {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 300)
+                ZStack{
+                    Button(action: {
+                        showPicker = true
+                    }){
+                        Text("🇰🇵 Select New Photo 🇰🇵")
+                    }
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 300)
+                        .colorEffect(ShaderLibrary.checkerboard(.float(fadeInterval), .color(.blue)))
+                }
             }
             if(!photoSelected){
                 Button(action: {
@@ -214,6 +236,7 @@ struct ContentView: View{
                     }
                     
                     DispatchQueue.main.async {
+                        fadeInterval = 0.0
                         self.image = object as? UIImage
                         withAnimation(.easeInOut(duration: 0.5)) {
                             photoSelected = (self.image != nil)

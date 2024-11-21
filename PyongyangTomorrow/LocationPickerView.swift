@@ -9,9 +9,10 @@ import SwiftUI
 
 enum Location: String, CaseIterable, Identifiable {
     case pyongyang = "🇰🇵Pyongyang"
-    case whiteHouse = "🏛️White House"
+    case ciaHQ = "🕵CIA HQ"
     case northPole = "⛄North Pole"
     case antarctica = "🐧Antarctica"
+    case area51 = "👽Area 51"
 
     var id: String { self.rawValue }
 }
