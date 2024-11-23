@@ -21,7 +21,7 @@ struct ContentView: View{
     
     @State private var deleteOriginal = false
     
-    @State private var fadeInterval = 0.0
+    @State var fadeInterval = 0.0
     
     @State private var isDatePickerSheetPresented = false
     @State private var selectedTimestamp = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
@@ -122,7 +122,7 @@ struct ContentView: View{
                         deleteOriginalPhoto(asset: asset)
                     }
                 }
-                withAnimation(.easeInOut(duration: 0.8)){
+                withAnimation(.easeInOut(duration: 0.5)){
                     fadeInterval = 1.0
                 }
                 print("Modified image saved successfully.")
@@ -148,20 +148,30 @@ struct ContentView: View{
     var body: some View {
         VStack {
             /*Image(systemName: "figure.run.circle.fill")
-                .font(.system(size: 300))
-                .colorEffect(ShaderLibrary.checkerboard(.float(0.2), .color(.blue)))*/
+                .font(.system(size: 200))
+                .colorEffect(ShaderLibrary.burnTransition(.float(0.8)))*/
             if let image = image {
                 ZStack{
-                    Button(action: {
-                        showPicker = true
-                    }){
-                        Text("🇰🇵 Select New Photo 🇰🇵")
-                    }
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
                         .frame(height: 300)
-                        .colorEffect(ShaderLibrary.checkerboard(.float(fadeInterval), .color(.blue)))
+                        .visualEffect { content, proxy in
+                            content
+                                .colorEffect(ShaderLibrary.burnTransition(
+                                    .float(fadeInterval),
+                                    .float2(proxy.size)
+                                ))
+                        }
+                    Button(action: {
+                        showPicker = true
+                    }){
+                        VStack{
+                            Text("Sent to Future!")
+                            Text("🇰🇵 Select New Photo 🇰🇵")
+                        }
+                        .opacity(fadeInterval)
+                    }
                 }
             }
             if(!photoSelected){
